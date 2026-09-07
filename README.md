@@ -6,10 +6,10 @@
 
 <p align="center">
    <strong>Physics-anchored digital twin and predictive health platform for aero-piston engines.</strong><br />
-   <a href="#quick-start">Quick start</a> &nbsp;·&nbsp;
-   <a href="#what-it-does">What it does</a> &nbsp;·&nbsp;
-   <a href="#architecture">Architecture</a> &nbsp;·&nbsp;
-   <a href="#api-surface">API surface</a>
+   <a href="#quick-start-guide">Quick start</a> &nbsp;·&nbsp;
+   <a href="#core-technical-capabilities">What it does</a> &nbsp;·&nbsp;
+   <a href="#system-architecture">Architecture</a> &nbsp;·&nbsp;
+   <a href="#rest-api-documentation">API surface</a>
 </p>
 
 <p align="center">
