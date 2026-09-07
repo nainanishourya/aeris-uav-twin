@@ -1,0 +1,12 @@
+/.git/
+/.pytest_cache/
+/.venv/
+/env/
+/tests/
+/assets/
+/data/
+/aeris/dashboard/
+/scripts/
+README.md
+*.pyc
+__pycache__/

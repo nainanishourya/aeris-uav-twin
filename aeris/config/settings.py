@@ -5,7 +5,8 @@ from pathlib import Path
 from dataclasses import dataclass, field
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-DATA_DIR = BASE_DIR / "data"
+# Vercel functions can read the bundled project but may only write to /tmp.
+DATA_DIR = Path("/tmp/aeris") if os.getenv("VERCEL") else BASE_DIR / "data"
 MODELS_DIR = BASE_DIR / "models"
 
 @dataclass

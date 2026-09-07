@@ -16,7 +16,13 @@
    <img src="https://img.shields.io/badge/Python-3.10%2B-21E6A5?style=flat-square&labelColor=07111F" alt="Python 3.10+" />
    <img src="https://img.shields.io/badge/FastAPI-API-21E6A5?style=flat-square&labelColor=07111F" alt="FastAPI" />
    <img src="https://img.shields.io/badge/Streamlit-GCS-F5C451?style=flat-square&labelColor=07111F" alt="Streamlit" />
+   <img src="https://img.shields.io/badge/Vercel-serverless-000000?style=flat-square&logo=vercel&logoColor=white" alt="Vercel serverless API" />
    <img src="https://img.shields.io/badge/Tests-pytest-F5C451?style=flat-square&labelColor=07111F" alt="pytest" />
+</p>
+
+<p align="center">
+   <img src="https://img.shields.io/badge/●_LIVE_SIGNAL-21E6A5?style=for-the-badge&labelColor=07111F" alt="Live signal" />
+   <img src="https://img.shields.io/badge/RESIDUALS→RUL-F5C451?style=for-the-badge&labelColor=07111F" alt="Residuals to RUL" />
 </p>
 
 > Built for Smart India Hackathon 2026, Problem Statement SIH26054. AERIS is a research prototype using a generic civilian/dual-use aero-piston engine model.
@@ -155,10 +161,10 @@ MISSION SIMULATOR & GROUND CONTROL DASHBOARD (Streamlit + Plotly HUD)
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/your-org/aeris-uav-twin.git
+git clone https://github.com/nainanishourya/aeris-uav-twin.git
 cd aeris-uav-twin
 
-pip install -r requirements.txt
+pip install -r requirements.txt -r requirements-dashboard.txt
 ```
 
 ### 2. Train Models & Verify Evaluation Metrics
@@ -183,7 +189,7 @@ Run the Streamlit operator dashboard:
 ```bash
 streamlit run aeris/dashboard/app.py
 ```
-Open your browser at **http://localhost:8501**.
+For local dashboard development, open **http://localhost:8501**.
 
 ### 4. Run the REST API Backend (Optional)
 
@@ -192,7 +198,9 @@ In a separate terminal, launch the FastAPI server:
 ```bash
 python scripts/run_aeris.py --mode api
 ```
-Access interactive OpenAPI / Swagger docs at **http://localhost:8000/docs**.
+The deployed API is available at **https://aeris-uav-twin.vercel.app** and its
+interactive Swagger docs are at **https://aeris-uav-twin.vercel.app/docs**.
+For local API development, use **http://localhost:8000/docs**.
 
 ### 5. Run the 1-Click Demo Scenario via CLI
 
@@ -203,6 +211,39 @@ python -m aeris.demo.demo_scenario
 ```
 
 Or click the prominent **"🚀 START DEMO SCENARIO"** button in the dashboard sidebar!
+
+## ☁️ Deploy The API To Vercel
+
+The repository includes a Vercel serverless adapter in `api/index.py` and a
+ready-to-use `vercel.json`. Vercel hosts the FastAPI API; the Streamlit ground
+station remains a separate dashboard deployment because Streamlit needs a
+persistent process rather than a serverless function.
+
+### Vercel API
+
+**Live API:** [aeris-uav-twin.vercel.app](https://aeris-uav-twin.vercel.app) ·
+[Swagger docs](https://aeris-uav-twin.vercel.app/docs)
+
+1. Import this GitHub repository into [Vercel](https://vercel.com/new).
+2. Keep the framework preset as **Other** and deploy from the repository root.
+3. After deployment, open `/docs` for Swagger or `/api/health` for a JSON health check.
+
+For CLI deployment:
+
+```bash
+npx vercel --prod
+```
+
+The API uses Vercel's temporary `/tmp` filesystem for demo telemetry. Data is
+therefore intentionally ephemeral; use an external database before treating a
+deployment as production telemetry storage.
+
+### Streamlit Ground Station
+
+Deploy `aeris/dashboard/app.py` on [Streamlit Community Cloud](https://share.streamlit.io/)
+using the repository root as the working directory. Configure its dependency
+file as `requirements-dashboard.txt`. The dashboard remains available locally
+with `streamlit run aeris/dashboard/app.py`.
 
 ---
 

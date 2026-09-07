@@ -34,6 +34,17 @@ app.add_middleware(
 db = AerisDatabase()
 mission_sim = MissionSimulator()
 
+
+@app.get("/", include_in_schema=False)
+def get_api_home():
+    """Provides a compact landing response for the deployed API."""
+    return {
+        "name": "AERIS API",
+        "status": "ONLINE",
+        "docs": "/docs",
+        "health": "/api/health",
+    }
+
 # ----------------- REQUEST SCHEMAS -----------------
 
 class OperatingPointRequest(BaseModel):
