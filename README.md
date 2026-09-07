@@ -38,6 +38,31 @@ That residual vector powers anomaly detection, fault classification, health scor
 
 ---
 
+## 🛰️ Capability Deck
+
+<p align="center">
+   <img src="assets/aeris-capabilities.svg" alt="Animated AERIS capability board for physics, residuals, anomalies, faults, health, and mission operations" width="100%" />
+</p>
+
+<p align="center">
+   <strong>Observe → model → explain → forecast → act.</strong>
+</p>
+
+<details>
+<summary><strong>Open the technical layer behind each signal</strong></summary>
+
+| Signal layer | What AERIS does | Primary module |
+| --- | --- | --- |
+| Physics model | Estimates the engine state under current operating conditions | `aeris/core/physics_twin.py` |
+| Residuals | Measures observed values against expected values | `aeris/core/residual_engine.py` |
+| Anomalies | Scores unusual residual patterns | `aeris/ml/anomaly_detector.py` |
+| Fault modes | Classifies likely failure modes and evidence | `aeris/ml/fault_classifier.py` |
+| Health and RUL | Scores condition and projects remaining useful life | `aeris/core/health_index.py`, `aeris/ml/rul_estimator.py` |
+| Mission operations | Replays, compares, and turns findings into maintenance context | `aeris/mission/`, `aeris/dashboard/` |
+</details>
+
+---
+
 ## 📌 Executive Summary
 
 Modern Medium-Altitude Long-Endurance (MALE) Unmanned Aerial Vehicles (UAVs) rely on turbocharged aero-piston powerplants for high-endurance surveillance, intelligence, and reconnaissance missions. Operational safety, mission completion certainty, and predictive fleet maintenance require continuous real-time health intelligence rather than static threshold alerts.
