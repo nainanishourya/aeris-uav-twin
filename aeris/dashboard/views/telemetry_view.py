@@ -53,10 +53,9 @@ def render_telemetry_view(history: List[Dict[str, Any]]):
             line=dict(color="#ef4444", width=2.0)
         ))
         fig_temp.update_layout(
-            **get_dark_layout(height=300),
+            **dict(get_dark_layout(height=300), yaxis=dict(title=dict(text="CHT (°C)", font=dict(color="#f59e0b")), tickfont=dict(color="#f59e0b"))),
             title="Thermal Dynamics: CHT & EGT",
             xaxis_title="Mission Elapsed Time (s)",
-            yaxis=dict(title=dict(text="CHT (°C)", font=dict(color="#f59e0b")), tickfont=dict(color="#f59e0b")),
             yaxis2=dict(title=dict(text="EGT (°C)", font=dict(color="#ef4444")), tickfont=dict(color="#ef4444"), overlaying="y", side="right")
         )
         st.plotly_chart(fig_temp, width='stretch')
@@ -79,10 +78,9 @@ def render_telemetry_view(history: List[Dict[str, Any]]):
         ))
         fig_oil.add_hline(y=2.0, line_dash="dash", line_color="#ef4444", annotation_text="Min Oil P (2.0 bar)")
         fig_oil.update_layout(
-            **get_dark_layout(height=300),
+            **dict(get_dark_layout(height=300), yaxis=dict(title=dict(text="Oil Pressure (bar)", font=dict(color="#00e5a3")), tickfont=dict(color="#00e5a3"))),
             title="Lubrication Hydrodynamics: Oil P & Oil Temp",
             xaxis_title="Mission Elapsed Time (s)",
-            yaxis=dict(title=dict(text="Oil Pressure (bar)", font=dict(color="#00e5a3")), tickfont=dict(color="#00e5a3")),
             yaxis2=dict(title=dict(text="Oil Temp (°C)", font=dict(color="#f97316")), tickfont=dict(color="#f97316"), overlaying="y", side="right")
         )
         st.plotly_chart(fig_oil, width='stretch')
@@ -102,10 +100,9 @@ def render_telemetry_view(history: List[Dict[str, Any]]):
         ))
         fig_vf.add_hline(y=4.5, line_dash="dash", line_color="#ef4444", annotation_text="Caution Vib (4.5 mm/s)")
         fig_vf.update_layout(
-            **get_dark_layout(height=300),
+            **dict(get_dark_layout(height=300), yaxis=dict(title=dict(text="Vibration (mm/s RMS)", font=dict(color="#a855f7")), tickfont=dict(color="#a855f7"))),
             title="Vibration Velocity & Fuel Consumption",
             xaxis_title="Mission Elapsed Time (s)",
-            yaxis=dict(title=dict(text="Vibration (mm/s RMS)", font=dict(color="#a855f7")), tickfont=dict(color="#a855f7")),
             yaxis2=dict(
                 title=dict(text="Fuel Flow (L/h)", font=dict(color="#06b6d4")),
                 tickfont=dict(color="#06b6d4"), overlaying="y", side="right"
