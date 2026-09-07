@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from typing import Dict, Any
 
-from aeris.dashboard.styles import PLOTLY_DARK_THEME
+from aeris.dashboard.styles import PLOTLY_DARK_THEME, get_dark_layout
 from aeris.ml.rul_estimator import PhysicsInformedRULEstimator
 
 def render_health_rul_view(latest: Dict[str, Any], sim):

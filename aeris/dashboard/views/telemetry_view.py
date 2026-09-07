@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from typing import List, Dict, Any
 
-from aeris.dashboard.styles import PLOTLY_DARK_THEME
+from aeris.dashboard.styles import PLOTLY_DARK_THEME, get_dark_layout
 
 def render_telemetry_view(history: List[Dict[str, Any]]):
     """Renders real-time telemetry time-series strip charts."""
