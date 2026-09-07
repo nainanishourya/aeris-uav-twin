@@ -245,6 +245,18 @@ using the repository root as the working directory. Configure its dependency
 file as `requirements-dashboard.txt`. The dashboard remains available locally
 with `streamlit run aeris/dashboard/app.py`.
 
+### Full Dashboard On Render
+
+For a public deployment that keeps the original Streamlit dashboard and all of
+its views, use the included `render.yaml`:
+
+1. Open [Render](https://render.com/) and choose **New + → Blueprint**.
+2. Connect `nainanishourya/aeris-uav-twin` and select the `master` branch.
+3. Deploy the `aeris-ground-control` web service. Render will install
+   `requirements-dashboard.txt` and start Streamlit on its public URL.
+
+The free Render service may sleep after inactivity and wake on the next visit.
+
 ---
 
 ## 🧪 Automated Testing
