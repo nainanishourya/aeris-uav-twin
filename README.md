@@ -16,7 +16,6 @@
    <img src="https://img.shields.io/badge/Python-3.10%2B-21E6A5?style=flat-square&labelColor=07111F" alt="Python 3.10+" />
    <img src="https://img.shields.io/badge/FastAPI-API-21E6A5?style=flat-square&labelColor=07111F" alt="FastAPI" />
    <img src="https://img.shields.io/badge/Streamlit-GCS-F5C451?style=flat-square&labelColor=07111F" alt="Streamlit" />
-   <img src="https://img.shields.io/badge/Vercel-serverless-000000?style=flat-square&logo=vercel&logoColor=white" alt="Vercel serverless API" />
    <img src="https://img.shields.io/badge/Tests-pytest-F5C451?style=flat-square&labelColor=07111F" alt="pytest" />
 </p>
 
@@ -43,7 +42,7 @@ That residual vector powers anomaly detection, fault classification, health scor
 
 Modern Medium-Altitude Long-Endurance (MALE) Unmanned Aerial Vehicles (UAVs) rely on turbocharged aero-piston powerplants for high-endurance surveillance, intelligence, and reconnaissance missions. Operational safety, mission completion certainty, and predictive fleet maintenance require continuous real-time health intelligence rather than static threshold alerts.
 
-**AERIS** is a production-grade, offline-first digital twin and predictive health monitoring system. Rather than feeding raw, noisy sensor data directly to machine learning models, AERIS utilizes a **hybrid physics-anchored architecture**:
+**AERIS** is an offline-first research prototype for digital-twin-assisted engine health monitoring. Rather than feeding raw, noisy sensor data directly to machine learning models, AERIS uses a **hybrid physics-anchored architecture**:
 
 $$\text{Residual} = \text{Actual Sensor Reading} - \text{Digital Twin Expected Value}$$
 
@@ -143,7 +142,7 @@ MISSION SIMULATOR & GROUND CONTROL DASHBOARD (Streamlit + Plotly HUD)
 
 ---
 
-## 💻 Tech Stack (100% Free & Open-Source)
+## 💻 Technology Stack
 
 - **Backend**: Python 3.10+, FastAPI, Uvicorn
 - **Frontend / Ground Station**: Streamlit, Plotly
@@ -151,6 +150,35 @@ MISSION SIMULATOR & GROUND CONTROL DASHBOARD (Streamlit + Plotly HUD)
 - **Database**: SQLite (built-in, zero-configuration)
 - **Telemetry Protocol**: MQTT 3.1.1 / 5.0 (Paho-MQTT with resilient in-memory fallback)
 - **Testing**: Pytest, HTTPX
+
+> **Resource note:** AERIS is intentionally designed for local or air-gapped use. The Streamlit dashboard loads scientific Python libraries, Plotly, SQLite telemetry state, and machine-learning models, so a free serverless host is not suitable for the full application. Run it locally for the complete experience.
+
+## 📊 Replay Data And CSV Inputs
+
+The repository includes `CSV files/CMAPSSData.zip`, an archive of the NASA Ames
+C-MAPSS turbofan-engine degradation dataset. It contains the FD001-FD004
+training and test files plus RUL reference files. These files are useful for
+experimentation and degradation-trajectory analysis, but they are not AERIS
+aero-piston telemetry columns and therefore are not drop-in inputs for the
+mission replay chart without a preprocessing step.
+
+The dashboard's **Historical Mission Replay** view is implemented in
+`aeris/dashboard/views/replay_view.py`. It supports two paths:
+
+1. Select one of the built-in generated mission logs for a ready-to-run demo.
+2. Use **Or Upload Custom Mission CSV** to upload a compatible CSV from your
+   own flight or transformed NASA dataset.
+
+For the replay chart, a compatible CSV should include at least:
+`timestamp_sec`, `rpm`, `cht_c`, `egt_c`, `oil_pressure_bar`, `fuel_flow_lph`,
+`vibration_mms`, `is_anomaly`, and `fault_label`. Additional columns such as
+`res_cht`, `res_egt`, `res_oil_p`, `res_fuel_flow`, and `res_vibration` improve
+the displayed residual deltas. The uploader reads the file with Pandas and
+renders it through the same replay controls as the generated data.
+
+If you do not have a compatible file, use the sidebar's **START DEMO SCENARIO**
+button or choose a generated flight in **Historical Mission Replay**. That
+path requires no external dataset.
 
 ---
 
@@ -198,9 +226,8 @@ In a separate terminal, launch the FastAPI server:
 ```bash
 python scripts/run_aeris.py --mode api
 ```
-The deployed API is available at **https://aeris-uav-twin.vercel.app** and its
-interactive Swagger docs are at **https://aeris-uav-twin.vercel.app/docs**.
-For local API development, use **http://localhost:8000/docs**.
+Access the local interactive OpenAPI / Swagger documentation at
+**http://localhost:8000/docs**.
 
 ### 5. Run the 1-Click Demo Scenario via CLI
 
@@ -211,51 +238,6 @@ python -m aeris.demo.demo_scenario
 ```
 
 Or click the prominent **"🚀 START DEMO SCENARIO"** button in the dashboard sidebar!
-
-## ☁️ Deploy The API To Vercel
-
-The repository includes a Vercel serverless adapter in `api/index.py`, a static
-browser dashboard in `public/`, and a ready-to-use `vercel.json`. Vercel hosts
-the live dashboard and FastAPI API together.
-
-### Vercel API
-
-**Live dashboard:** [aeris-uav-twin.vercel.app](https://aeris-uav-twin.vercel.app)  
-**Live API:** [aeris-uav-twin.vercel.app/api/health](https://aeris-uav-twin.vercel.app/api/health) ·
-[Swagger docs](https://aeris-uav-twin.vercel.app/docs)
-
-1. Import this GitHub repository into [Vercel](https://vercel.com/new).
-2. Keep the framework preset as **Other** and deploy from the repository root.
-3. After deployment, open `/docs` for Swagger or `/api/health` for a JSON health check.
-
-For CLI deployment:
-
-```bash
-npx vercel --prod
-```
-
-The API uses Vercel's temporary `/tmp` filesystem for demo telemetry. Data is
-therefore intentionally ephemeral; use an external database before treating a
-deployment as production telemetry storage.
-
-### Local Streamlit Ground Station
-
-Deploy `aeris/dashboard/app.py` on [Streamlit Community Cloud](https://share.streamlit.io/)
-using the repository root as the working directory. Configure its dependency
-file as `requirements-dashboard.txt`. The dashboard remains available locally
-with `streamlit run aeris/dashboard/app.py`.
-
-### Full Dashboard On Render
-
-For a public deployment that keeps the original Streamlit dashboard and all of
-its views, use the included `render.yaml`:
-
-1. Open [Render](https://render.com/) and choose **New + → Blueprint**.
-2. Connect `nainanishourya/aeris-uav-twin` and select the `master` branch.
-3. Deploy the `aeris-ground-control` web service. Render will install
-   `requirements-dashboard.txt` and start Streamlit on its public URL.
-
-The free Render service may sleep after inactivity and wake on the next visit.
 
 ---
 
