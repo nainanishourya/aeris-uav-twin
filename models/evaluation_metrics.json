@@ -1,0 +1,147 @@
+{
+  "dataset": {
+    "total_samples": 36000,
+    "train_samples": 27000,
+    "test_samples": 9000,
+    "features": [
+      "z_egt",
+      "z_cht",
+      "z_oil_p",
+      "z_oil_t",
+      "z_fuel_flow",
+      "z_vibration",
+      "res_egt",
+      "res_cht",
+      "res_oil_p",
+      "res_oil_t",
+      "res_fuel_flow",
+      "res_vibration",
+      "rpm",
+      "engine_load"
+    ]
+  },
+  "anomaly_detection": {
+    "model": "IsolationForest",
+    "precision": 0.7253,
+    "recall": 0.9086,
+    "f1_score": 0.8067
+  },
+  "fault_classifier": {
+    "model": "RandomForestClassifier",
+    "accuracy": 0.9837,
+    "macro_f1": 0.9734,
+    "weighted_f1": 0.9836,
+    "classes": [
+      "Abnormal Vibration",
+      "Combustion Instability",
+      "General Degradation",
+      "Healthy",
+      "Injector Abnormality",
+      "Lubrication Problem",
+      "Misfire",
+      "Overheating",
+      "Sensor Drift/Failure"
+    ],
+    "confusion_matrix": [
+      [
+        434,
+        46,
+        0,
+        5,
+        0,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        14,
+        468,
+        0,
+        3,
+        0,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        467,
+        20,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        6,
+        5089,
+        1,
+        0,
+        2,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        2,
+        3,
+        483,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        8,
+        0,
+        478,
+        0,
+        1,
+        0
+      ],
+      [
+        3,
+        3,
+        0,
+        4,
+        0,
+        0,
+        477,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        5,
+        0,
+        0,
+        0,
+        480,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        10,
+        0,
+        0,
+        0,
+        0,
+        477
+      ]
+    ]
+  }
+}

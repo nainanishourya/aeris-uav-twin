@@ -1,0 +1,48 @@
+<svg width="1600" height="520" viewBox="0 0 1600 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="520" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07111F"/>
+      <stop offset="0.55" stop-color="#0C2030"/>
+      <stop offset="1" stop-color="#102B2B"/>
+    </linearGradient>
+    <linearGradient id="signal" x1="230" y1="380" x2="1370" y2="180" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#21E6A5" stop-opacity="0"/>
+      <stop offset="0.48" stop-color="#21E6A5"/>
+      <stop offset="1" stop-color="#F5C451" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" stroke="#B6D8D0" stroke-opacity="0.09"/>
+    </pattern>
+    <filter id="glow"><feGaussianBlur stdDeviation="7" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <style>
+      .pulse { animation: pulse 2.4s ease-in-out infinite; transform-origin: center; }
+      .scan { animation: scan 5s linear infinite; }
+      .drift { animation: drift 8s ease-in-out infinite alternate; }
+      @keyframes pulse { 0%,100% { opacity:.45; transform:scale(.85) } 50% { opacity:1; transform:scale(1.15) } }
+      @keyframes scan { from { transform:translateX(-360px) } to { transform:translateX(1500px) } }
+      @keyframes drift { from { transform:translateX(-18px) } to { transform:translateX(18px) } }
+    </style>
+  </defs>
+  <rect width="1600" height="520" rx="24" fill="url(#bg)"/>
+  <rect width="1600" height="520" rx="24" fill="url(#grid)"/>
+  <path d="M0 420C260 330 380 450 640 350C920 242 1050 360 1600 180" stroke="#21E6A5" stroke-opacity=".11" stroke-width="2"/>
+  <path class="drift" d="M120 398C370 302 445 435 690 334C930 234 1130 334 1500 185" stroke="url(#signal)" stroke-width="3" filter="url(#glow)"/>
+  <g class="scan" opacity=".3"><path d="M0 80H340" stroke="#21E6A5" stroke-width="2"/><path d="M0 84H340" stroke="#21E6A5" stroke-opacity=".2" stroke-width="10"/></g>
+  <g transform="translate(120 108)">
+    <circle cx="22" cy="22" r="8" fill="#21E6A5" class="pulse" filter="url(#glow)"/>
+    <text x="58" y="31" fill="#9CBAB7" font-family="monospace" font-size="18" letter-spacing="5">AERIS / FLIGHT SYSTEMS</text>
+    <text y="140" fill="#F4F7EF" font-family="Georgia, serif" font-size="92" font-weight="700">Engine intelligence</text>
+    <text y="208" fill="#21E6A5" font-family="Georgia, serif" font-size="92" font-weight="700">in motion.</text>
+    <text y="264" fill="#B6D8D0" font-family="Arial, sans-serif" font-size="22">Physics-anchored digital twin + predictive health for aero-piston engines.</text>
+  </g>
+  <g transform="translate(1190 88)" opacity=".8">
+    <rect width="250" height="170" rx="12" fill="#07111F" fill-opacity=".7" stroke="#21E6A5" stroke-opacity=".35"/>
+    <text x="24" y="35" fill="#9CBAB7" font-family="monospace" font-size="12" letter-spacing="2">LIVE / TWIN STATUS</text>
+    <text x="24" y="83" fill="#F4F7EF" font-family="monospace" font-size="42">96.4</text>
+    <text x="148" y="83" fill="#21E6A5" font-family="monospace" font-size="15">HEALTH</text>
+    <path d="M24 120H226" stroke="#29484B"/>
+    <path d="M24 120C66 84 92 142 126 104C161 65 182 119 226 88" stroke="#F5C451" stroke-width="2" fill="none"/>
+    <circle cx="226" cy="88" r="5" fill="#F5C451" class="pulse"/>
+  </g>
+  <text x="120" y="462" fill="#6F908B" font-family="monospace" font-size="14" letter-spacing="2">RESIDUALS  /  ANOMALIES  /  RUL  /  MISSION RISK</text>
+</svg>
