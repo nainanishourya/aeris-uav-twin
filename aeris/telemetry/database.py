@@ -14,6 +14,7 @@ class AerisDatabase:
 
     def __init__(self, db_path: Optional[Path] = None):
         self.db_path = db_path or settings.db_path
+        self._initializing = False
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._init_db()
 
@@ -22,6 +23,19 @@ class AerisDatabase:
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         conn = sqlite3.connect(str(self.db_path), timeout=15.0)
         conn.row_factory = sqlite3.Row
+        if not self._initializing:
+            schema_exists = conn.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' AND name='engine_telemetry'"
+            ).fetchone()
+            if not schema_exists:
+                conn.close()
+                self._initializing = True
+                try:
+                    self._init_db()
+                finally:
+                    self._initializing = False
+                conn = sqlite3.connect(str(self.db_path), timeout=15.0)
+                conn.row_factory = sqlite3.Row
         try:
             yield conn
         finally:
