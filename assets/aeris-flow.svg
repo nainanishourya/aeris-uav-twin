@@ -1,0 +1,41 @@
+<svg width="1600" height="420" viewBox="0 0 1600 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="420" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07111F"/>
+      <stop offset="1" stop-color="#102B2B"/>
+    </linearGradient>
+    <linearGradient id="flow" x1="100" y1="0" x2="1500" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#21E6A5" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#21E6A5"/>
+      <stop offset="1" stop-color="#F5C451" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" stroke="#B6D8D0" stroke-opacity="0.08"/></pattern>
+    <style>
+      .node { animation: breathe 2.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+      .node:nth-of-type(2) { animation-delay: .35s; }
+      .node:nth-of-type(3) { animation-delay: .7s; }
+      .node:nth-of-type(4) { animation-delay: 1.05s; }
+      .node:nth-of-type(5) { animation-delay: 1.4s; }
+      .packet { animation: travel 4.5s linear infinite; }
+      .packet.two { animation-delay: 2.25s; }
+      @keyframes breathe { 0%,100% { opacity: .72; } 50% { opacity: 1; } }
+      @keyframes travel { from { transform: translateX(-1450px); } to { transform: translateX(1450px); } }
+    </style>
+  </defs>
+  <rect width="1600" height="420" rx="22" fill="url(#bg)"/>
+  <rect width="1600" height="420" rx="22" fill="url(#grid)"/>
+  <text x="70" y="62" fill="#21E6A5" font-family="monospace" font-size="15" letter-spacing="4">AERIS / INTELLIGENCE PIPELINE</text>
+  <text x="70" y="96" fill="#B6D8D0" font-family="Arial, sans-serif" font-size="20">Every diagnostic starts with the difference between expected and observed behavior.</text>
+  <path d="M145 220H1455" stroke="#29484B" stroke-width="3"/>
+  <path d="M145 220H1455" stroke="url(#flow)" stroke-width="2" stroke-dasharray="10 16"/>
+  <g class="packet" filter="url(#glow)"><circle cx="145" cy="220" r="7" fill="#21E6A5"/></g>
+  <g class="packet two" filter="url(#glow)"><circle cx="145" cy="220" r="5" fill="#F5C451"/></g>
+  <g class="node"><circle cx="145" cy="220" r="42" fill="#0C2730" stroke="#21E6A5" stroke-width="2"/><text x="145" y="216" text-anchor="middle" fill="#F4F7EF" font-family="monospace" font-size="13">INPUT</text><text x="145" y="235" text-anchor="middle" fill="#6F908B" font-family="monospace" font-size="10">SENSORS</text></g>
+  <g class="node"><circle cx="450" cy="220" r="42" fill="#0C2730" stroke="#21E6A5" stroke-width="2"/><text x="450" y="216" text-anchor="middle" fill="#F4F7EF" font-family="monospace" font-size="13">TWIN</text><text x="450" y="235" text-anchor="middle" fill="#6F908B" font-family="monospace" font-size="10">PHYSICS</text></g>
+  <g class="node"><circle cx="755" cy="220" r="42" fill="#0C2730" stroke="#21E6A5" stroke-width="2"/><text x="755" y="216" text-anchor="middle" fill="#F4F7EF" font-family="monospace" font-size="13">DELTA</text><text x="755" y="235" text-anchor="middle" fill="#6F908B" font-family="monospace" font-size="10">RESIDUALS</text></g>
+  <g class="node"><circle cx="1060" cy="220" r="42" fill="#0C2730" stroke="#F5C451" stroke-width="2"/><text x="1060" y="216" text-anchor="middle" fill="#F4F7EF" font-family="monospace" font-size="13">FUSION</text><text x="1060" y="235" text-anchor="middle" fill="#6F908B" font-family="monospace" font-size="10">AI / XAI</text></g>
+  <g class="node"><circle cx="1455" cy="220" r="42" fill="#0C2730" stroke="#F5C451" stroke-width="2"/><text x="1455" y="216" text-anchor="middle" fill="#F4F7EF" font-family="monospace" font-size="13">ACTION</text><text x="1455" y="235" text-anchor="middle" fill="#6F908B" font-family="monospace" font-size="10">RUL / OPS</text></g>
+  <g fill="#6F908B" font-family="monospace" font-size="11" text-anchor="middle"><text x="145" y="315">RPM / TEMPS</text><text x="450" y="315">EXPECTED STATE</text><text x="755" y="315">Z-SCORES</text><text x="1060" y="315">FAULT MODE</text><text x="1455" y="315">MAINTENANCE</text></g>
+  <text x="70" y="380" fill="#6F908B" font-family="monospace" font-size="12" letter-spacing="2">NOMINAL STREAM  //  ANOMALY  //  HEALTH INDEX  //  REMAINING USEFUL LIFE</text>
+</svg>

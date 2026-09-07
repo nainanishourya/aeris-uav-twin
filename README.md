@@ -52,33 +52,36 @@ By standardizing residuals against nominal baseline physics variances, AERIS iso
 
 ## 🏛️ System Architecture
 
+<p align="center">
+    <img src="assets/aeris-flow.svg" alt="Animated AERIS intelligence pipeline from sensors to maintenance action" width="100%" />
+</p>
+
+```mermaid
+flowchart LR
+      A[Engine sensors<br/>RPM, CHT, EGT, oil, vibration] --> B[Telemetry gateway<br/>FastAPI / MQTT / SQLite]
+      B --> C[Validation and filtering<br/>Pydantic / bounds]
+      C --> D[Physics digital twin<br/>Expected engine state]
+      A --> E[Observed state]
+      D --> F[Residual engine<br/>Actual - expected]
+      E --> F
+      F --> G[Sensor fusion and ML<br/>Anomaly / fault / health]
+      G --> H[XAI and RUL<br/>Evidence + confidence]
+      H --> I[Streamlit GCS<br/>Mission and maintenance action]
+      classDef input fill:#0c2730,stroke:#21e6a5,color:#f4f7ef
+      classDef analysis fill:#102b2b,stroke:#f5c451,color:#f4f7ef
+      class A,B,C,D,E input
+      class F,G,H,I analysis
 ```
-ENGINE / TELEMETRY SIMULATOR (MQTT / Direct Stream)
-  │ (RPM, CHT, EGT, Oil P/T, Fuel Flow, Vib, Batt, Throttle, Alt, Amb Temp, Load)
-  ▼
-TELEMETRY GATEWAY & INGESTION (FastAPI / MQTT / SQLite)
-  │
-  ▼
-VALIDATION & FILTERING (Pydantic / Statistical Bounds)
-  │
-  ▼
-DIGITAL TWIN (Generic 4-Stroke Turbocharged Aero-Piston Thermodynamic Model)
-  │  ├── Energy balance, BSFC, manifold pressure, lubrication hydrodynamics
-  │  └── Computes Residual Vector: Δ = Actual - Twin_Expected (Normalized z-scores)
-  ▼
-ANALYTICS & SENSOR FUSION ENGINE
-  │  ├── Isolation Forest (Unsupervised Anomaly Detection on Residuals)
-  │  ├── Multi-Class Random Forest (8 Fault Mode Classifications)
-  │  ├── Cross-Sensor Consistency Engine (Drift / Transducer Disambiguation)
-  │  ├── Engine Health Index (0-100 composite index across 5 severity tiers)
-  │  └── Physics-Informed RUL Estimator (Remaining Useful Life with 90% bounds)
-  ▼
-EXPLAINABLE AI (XAI) & PREDICTIVE MAINTENANCE
-  │  ├── Feature & Residual Attribution Ranking
-  │  └── Model-Driven Actionable Maintenance Work Orders
-  ▼
-MISSION SIMULATOR & GROUND CONTROL DASHBOARD (Streamlit + Plotly HUD)
-```
+
+<details>
+<summary><strong>What moves through the pipeline?</strong></summary>
+
+`Sensors -> expected state -> residuals -> anomaly and fault evidence -> health and RUL -> operator action`
+
+The moving signal in the diagram represents the central AERIS idea: changing
+operating conditions should change the digital twin's expectation before they
+are treated as a fault.
+</details>
 
 ---
 
