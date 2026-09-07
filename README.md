@@ -191,18 +191,23 @@ aero-piston telemetry columns and therefore are not drop-in inputs for the
 mission replay chart without a preprocessing step.
 
 The dashboard's **Historical Mission Replay** view is implemented in
-`aeris/dashboard/views/replay_view.py`. It supports two paths:
+`aeris/dashboard/views/replay_view.py`. It supports three paths:
 
 1. Select one of the built-in generated mission logs for a ready-to-run demo.
-2. Use **Or Upload Custom Mission CSV** to upload a compatible CSV from your
-   own flight or transformed NASA dataset.
+2. Upload a compatible `.csv` or whitespace-delimited `.txt` file from your own
+   flight or transformed NASA dataset.
+3. Upload the provided `.zip` archive, then select a `train_FD00x.txt` or
+   `test_FD00x.txt` data table from inside it.
 
-For the replay chart, a compatible CSV should include at least:
+For a project-specific replay chart, a compatible CSV/TXT table should include:
 `timestamp_sec`, `rpm`, `cht_c`, `egt_c`, `oil_pressure_bar`, `fuel_flow_lph`,
 `vibration_mms`, `is_anomaly`, and `fault_label`. Additional columns such as
 `res_cht`, `res_egt`, `res_oil_p`, `res_fuel_flow`, and `res_vibration` improve
-the displayed residual deltas. The uploader reads the file with Pandas and
-renders it through the same replay controls as the generated data.
+the displayed residual deltas. The uploader reads CSV files with Pandas and
+parses whitespace-delimited TXT files. NASA C-MAPSS 26-column TXT tables are
+automatically adapted into the replay fields and labeled as `NASA C-MAPSS
+Degradation`; this is a visualization adapter, not a claim that turbofan
+measurements are aero-piston measurements.
 
 If you do not have a compatible file, use the sidebar's **START DEMO SCENARIO**
 button or choose a generated flight in **Historical Mission Replay**. That

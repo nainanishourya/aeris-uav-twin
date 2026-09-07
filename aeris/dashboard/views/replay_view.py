@@ -1,12 +1,92 @@
 """Ground Control Station: Historical Mission Telemetry Replay."""
 
+import io
+import zipfile
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List, Tuple
 
 from aeris.dashboard.styles import PLOTLY_DARK_THEME
 from aeris.ml.data_generator import SyntheticTelemetryGenerator
+
+
+def _read_text_table(raw: bytes, filename: str) -> pd.DataFrame:
+    """Reads comma-separated or whitespace-delimited telemetry text."""
+    if filename.lower().endswith(".csv"):
+        return pd.read_csv(io.BytesIO(raw))
+
+    frame = pd.read_csv(io.BytesIO(raw), sep=r"\s+", header=None, engine="python")
+    if len(frame.columns) == 1:
+        frame = pd.read_csv(io.BytesIO(raw), header=None)
+    return frame
+
+
+def _adapt_cmapss(frame: pd.DataFrame) -> pd.DataFrame:
+    """Maps NASA C-MAPSS cycles to the fields used by the replay visualizer."""
+    if frame.shape[1] < 26:
+        return frame
+
+    numeric = frame.apply(pd.to_numeric, errors="coerce").dropna(how="all").reset_index(drop=True)
+    numeric = numeric.dropna(axis=1, how="all")
+    if numeric.shape[1] < 26:
+        return frame
+
+    unit = numeric.iloc[:, 0]
+    cycle = numeric.iloc[:, 1]
+    sensors = numeric.iloc[:, 5:26]
+
+    def scaled_sensor(index: int, low: float, high: float) -> pd.Series:
+        values = sensors.iloc[:, index].astype(float)
+        span = values.max() - values.min()
+        normalized = (values - values.min()) / span if span else values * 0
+        return low + normalized * (high - low)
+
+    result = pd.DataFrame({
+        "timestamp_sec": cycle.astype(float),
+        "rpm": scaled_sensor(0, 2800, 5200),
+        "cht_c": scaled_sensor(1, 85, 155),
+        "egt_c": scaled_sensor(2, 500, 900),
+        "oil_pressure_bar": scaled_sensor(3, 2.2, 5.5),
+        "oil_temp_c": scaled_sensor(4, 70, 125),
+        "fuel_flow_lph": scaled_sensor(5, 18, 52),
+        "vibration_mms": scaled_sensor(6, 0.8, 5.5),
+        "altitude_m": scaled_sensor(7, 0, 6000),
+        "throttle": scaled_sensor(8, 0.35, 0.95),
+        "fault_label": "NASA C-MAPSS Degradation",
+    })
+    result["unit_id"] = unit.astype(int)
+    result["is_anomaly"] = (result.groupby("unit_id").cumcount() >= result.groupby("unit_id")["unit_id"].transform("size") * 0.8).astype(int)
+    result["health_index"] = (96.0 - result.groupby("unit_id").cumcount() / result.groupby("unit_id")["unit_id"].transform("size") * 65.0).clip(25.0, 100.0)
+    result["res_cht"] = result["cht_c"] - result["cht_c"].median()
+    result["res_egt"] = result["egt_c"] - result["egt_c"].median()
+    result["res_oil_p"] = result["oil_pressure_bar"] - result["oil_pressure_bar"].median()
+    result["res_fuel_flow"] = result["fuel_flow_lph"] - result["fuel_flow_lph"].median()
+    result["res_vibration"] = result["vibration_mms"] - result["vibration_mms"].median()
+    return result
+
+
+def _load_uploaded_replay(uploaded_file) -> Tuple[pd.DataFrame, str]:
+    """Loads CSV/TXT files or selects the first usable data table in a ZIP."""
+    filename = uploaded_file.name.lower()
+    raw = uploaded_file.getvalue()
+
+    if not filename.endswith(".zip"):
+        frame = _read_text_table(raw, filename)
+        return _adapt_cmapss(frame), uploaded_file.name
+
+    with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+        members = [
+            name for name in archive.namelist()
+            if name.lower().endswith((".txt", ".csv"))
+            and not name.lower().endswith(("readme.txt", ".pdf"))
+            and archive.getinfo(name).file_size > 0
+        ]
+        if not members:
+            raise ValueError("ZIP archive contains no CSV or TXT data files.")
+        member = st.selectbox("Select data file from ZIP", members, key="replay_zip_member")
+        frame = _read_text_table(archive.read(member), member.lower())
+        return _adapt_cmapss(frame), f"{uploaded_file.name} / {member}"
 
 def render_replay_view():
     """Renders historical telemetry playback, timeline scrubber, and event markers."""
@@ -28,7 +108,11 @@ def render_replay_view():
         )
 
     with c_source2:
-        uploaded_file = st.file_uploader("Or Upload Custom Mission CSV", type=["csv"])
+        uploaded_file = st.file_uploader(
+            "Upload CSV, TXT, or ZIP mission data",
+            type=["csv", "txt", "zip"],
+            help="ZIP files may contain NASA C-MAPSS TXT tables; choose the data file after upload.",
+        )
 
     # Load dataset
     if "replay_data" not in st.session_state or st.session_state.get("current_preset") != flight_preset:
@@ -51,9 +135,17 @@ def render_replay_view():
 
     if uploaded_file is not None:
         try:
-            custom_df = pd.read_csv(uploaded_file)
+            custom_df, source_name = _load_uploaded_replay(uploaded_file)
+            required = {"timestamp_sec", "rpm", "cht_c", "egt_c", "oil_pressure_bar", "fuel_flow_lph", "vibration_mms"}
+            missing = sorted(required.difference(custom_df.columns))
+            if missing:
+                raise ValueError(
+                    "This file is not a compatible replay table. Missing columns: "
+                    + ", ".join(missing)
+                    + ". NASA C-MAPSS TXT files should contain 26 numeric columns."
+                )
             st.session_state.replay_data = custom_df
-            st.success(f"Loaded custom replay file: {uploaded_file.name} ({len(custom_df)} records)")
+            st.success(f"Loaded replay data: {source_name} ({len(custom_df)} records)")
         except Exception as e:
             st.error(f"Error parsing uploaded file: {e}")
 
