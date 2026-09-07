@@ -197,7 +197,8 @@ The dashboard's **Historical Mission Replay** view is implemented in
 2. Upload a compatible `.csv` or whitespace-delimited `.txt` file from your own
    flight or transformed NASA dataset.
 3. Upload the provided `.zip` archive, then select a `train_FD00x.txt` or
-   `test_FD00x.txt` data table from inside it.
+   `test_FD00x.txt` data table from inside it. The one-column `RUL_FD00x.txt`
+   reference files are supported as degradation timelines too.
 
 For a project-specific replay chart, a compatible CSV/TXT table should include:
 `timestamp_sec`, `rpm`, `cht_c`, `egt_c`, `oil_pressure_bar`, `fuel_flow_lph`,

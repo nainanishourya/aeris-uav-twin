@@ -24,11 +24,11 @@ def _read_text_table(raw: bytes, filename: str) -> pd.DataFrame:
 
 def _adapt_cmapss(frame: pd.DataFrame) -> pd.DataFrame:
     """Maps NASA C-MAPSS cycles to the fields used by the replay visualizer."""
-    if frame.shape[1] < 26:
-        return frame
-
     numeric = frame.apply(pd.to_numeric, errors="coerce").dropna(how="all").reset_index(drop=True)
     numeric = numeric.dropna(axis=1, how="all")
+
+    if numeric.shape[1] == 1:
+        return _adapt_cmapss_rul(numeric.iloc[:, 0])
     if numeric.shape[1] < 26:
         return frame
 
@@ -58,6 +58,39 @@ def _adapt_cmapss(frame: pd.DataFrame) -> pd.DataFrame:
     result["unit_id"] = unit.astype(int)
     result["is_anomaly"] = (result.groupby("unit_id").cumcount() >= result.groupby("unit_id")["unit_id"].transform("size") * 0.8).astype(int)
     result["health_index"] = (96.0 - result.groupby("unit_id").cumcount() / result.groupby("unit_id")["unit_id"].transform("size") * 65.0).clip(25.0, 100.0)
+    result["res_cht"] = result["cht_c"] - result["cht_c"].median()
+    result["res_egt"] = result["egt_c"] - result["egt_c"].median()
+    result["res_oil_p"] = result["oil_pressure_bar"] - result["oil_pressure_bar"].median()
+    result["res_fuel_flow"] = result["fuel_flow_lph"] - result["fuel_flow_lph"].median()
+    result["res_vibration"] = result["vibration_mms"] - result["vibration_mms"].median()
+    return result
+
+
+def _adapt_cmapss_rul(rul_values: pd.Series) -> pd.DataFrame:
+    """Maps a NASA C-MAPSS RUL reference vector to a replay timeline."""
+    rul = pd.to_numeric(rul_values, errors="coerce").dropna().reset_index(drop=True)
+    if rul.empty:
+        return pd.DataFrame()
+
+    span = float(rul.max() - rul.min())
+    degradation = (rul.max() - rul) / span if span else pd.Series(0.0, index=rul.index)
+    health = (96.0 - degradation * 66.0).clip(25.0, 100.0)
+    result = pd.DataFrame({
+        "timestamp_sec": range(len(rul)),
+        "rpm": 5200.0 - degradation * 1100.0,
+        "cht_c": 112.0 + degradation * 38.0,
+        "egt_c": 690.0 + degradation * 150.0,
+        "oil_pressure_bar": 4.8 - degradation * 2.0,
+        "oil_temp_c": 82.0 + degradation * 30.0,
+        "fuel_flow_lph": 30.0 + degradation * 12.0,
+        "vibration_mms": 1.2 + degradation * 3.5,
+        "altitude_m": 2500.0,
+        "throttle": 0.72,
+        "fault_label": "NASA C-MAPSS RUL Reference",
+        "rul_cycles": rul,
+        "health_index": health,
+    })
+    result["is_anomaly"] = (degradation >= 0.8).astype(int)
     result["res_cht"] = result["cht_c"] - result["cht_c"].median()
     result["res_egt"] = result["egt_c"] - result["egt_c"].median()
     result["res_oil_p"] = result["oil_pressure_bar"] - result["oil_pressure_bar"].median()
