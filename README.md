@@ -214,14 +214,14 @@ Or click the prominent **"🚀 START DEMO SCENARIO"** button in the dashboard si
 
 ## ☁️ Deploy The API To Vercel
 
-The repository includes a Vercel serverless adapter in `api/index.py` and a
-ready-to-use `vercel.json`. Vercel hosts the FastAPI API; the Streamlit ground
-station remains a separate dashboard deployment because Streamlit needs a
-persistent process rather than a serverless function.
+The repository includes a Vercel serverless adapter in `api/index.py`, a static
+browser dashboard in `public/`, and a ready-to-use `vercel.json`. Vercel hosts
+the live dashboard and FastAPI API together.
 
 ### Vercel API
 
-**Live API:** [aeris-uav-twin.vercel.app](https://aeris-uav-twin.vercel.app) ·
+**Live dashboard:** [aeris-uav-twin.vercel.app](https://aeris-uav-twin.vercel.app)  
+**Live API:** [aeris-uav-twin.vercel.app/api/health](https://aeris-uav-twin.vercel.app/api/health) ·
 [Swagger docs](https://aeris-uav-twin.vercel.app/docs)
 
 1. Import this GitHub repository into [Vercel](https://vercel.com/new).
@@ -238,7 +238,7 @@ The API uses Vercel's temporary `/tmp` filesystem for demo telemetry. Data is
 therefore intentionally ephemeral; use an external database before treating a
 deployment as production telemetry storage.
 
-### Streamlit Ground Station
+### Local Streamlit Ground Station
 
 Deploy `aeris/dashboard/app.py` on [Streamlit Community Cloud](https://share.streamlit.io/)
 using the repository root as the working directory. Configure its dependency
